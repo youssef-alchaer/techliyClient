@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "techliy-372723",
+  "private_key_id": "03f98c730b41d2b0c29b66448836d91df713566b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCfS3bB38YQh3XP\nsw/3EMyb6dcHrCjgl1+ZkKaUOYVK5mg2g5Pbmj7JaqxKQP8haYn2ATEy1b+2r2xo\nKB9PCfXVy8/jYzpf+1E7ZomiznX3I9q63rjF9NDRKw0sIhK8Q4Fuys2lLQo8U1l8\nwGIfKhBc7J4WrFUAb0a5qS1JzGlAyok+uNdj32nAhS2ToTo/6FirlIly0THa9UeP\nmqp0F3AM7i+T3ZiQuAH0sJ8nMDhXCOia2coGVRo3hi+vjpetL04HvSUGXezwrO6/\nbgwElbm/rWB6FcCnfis5fi57HkWd1U/Tvn8or3z/QSN+K5z7A2kv9cbJZH7TleI1\nkJdDnn2dAgMBAAECggEAA/IhbnPiMEhLm9g2CzIwY8Fs1KhvPFbBzBZnQCgj753B\nJTVvulmvRlul7XYN7Zk6mz4e33n9bVjEvmakB3R2ikzUbIU+4xj9bhOHNSkKancR\nEUHU/cVuv9z+wLPVXjJejCIU6ot4A7eIKoz73a+lquTusclq7A2q7FOkUZpi64GE\nLX2Fpos7pB2tGkQi2gvRk9Qf7X3QAyypbtj0JXYe46TeUy36ZGwR4glDOBJ2+rPB\nR951C4/JkrWh8kemyhEpXfQN2hyvEmV3OUOwELihuJ4HEfzVo9tWH8RR+RTJoKPF\nL8sWix/JsqBBv7PPmS+7zO58oo6FEZeejWRcDT3AxwKBgQDLWqoZNw0aYOjvf8wE\n6dkenxqb2g9VfnqOje+iVL+qXRHJCyWJDL26jyF3UmSV0QDGRN+GI81Ob95qmfkr\niu9Ua6pb/usqiu3bLTKdnMuJKpef74GUzuZouwZBSLqpYDtZmmyYxQYRaxlIN3cG\nvPy333kgE/FtoURXfg2998YaswKBgQDIiMF+dvlWLZ1mRb/ZL/eCXRZ4Sdq9rJQR\nfUZe8CQo05T8uNaUq2PKOQ6797+ZH4c65i/gny1oKTxqm4nq0xqGL2qkqbpk1jQB\neFlgV1UKVk86hA7oZIHBbSp16FGt1caHeiIJ/q9TqqAnU5nGb5zUM0JhmLdCWDkl\nfhSPFcBubwKBgQCm93BGd88IY52eV/354s/ktpowcSC5/7k9Jwkk7hTZGsWpnr9Z\nAd8eOLsvr7Tq1cqfAJnPF8JQrsWeHYJa4B6V4DjmhC4upheaKEgw5TaxDwmjxhFN\nT3wbbcQ7Ai5RN7RDY+nanZrX3mnJw9C09aNCjfh0ACvw6cKlW9iIq9I6xQKBgQCe\n3jjsx7Sg4WJhM8DZf3bGgJjckyYIPkDP2j911ynOblEKJiVZgq579tgFcjEITkIE\nF3i2q2R9sK18h9yrfLL2u3nxGcXhPRHWWFH2UTm+BsKdySFGWtmxM5r/7h1HaqTt\nj4SIBo0/610VytV4r9O/CRz91M7acKpVWZ1P/huFYQKBgQClBpNDQMJEDkIFoAIV\nHnXeBjqm+xVR9AxImCjU1BuN4ZvLPmG89OwAVeP+QYcP+VgCOO+HyO2tQ+ji8EHo\nqkJDRiHmC//c0qCXI1NZhJ/6sXfHIf8EDASITpsPWxbXQsAEADC9B5tFLH1CxLZZ\nSDKP5UQaZGwTUmlfUkGxPCgzzA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "techliy-app@techliy-372723.iam.gserviceaccount.com",
+  "client_id": "114639759269335312764",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/techliy-app%40techliy-372723.iam.gserviceaccount.com"
+}
