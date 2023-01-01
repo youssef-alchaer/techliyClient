@@ -30,7 +30,7 @@ namespace techliyClient.Functions
 
         public void getOperatingSystemInfo()
         {
-            Console.WriteLine("Displaying operating system info....\n");
+            Console.WriteLine("Retriving operating system info");
             //Create an object of ManagementObjectSearcher class and pass query as parameter.
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");
             foreach (ManagementObject managementObject in mos.Get())
@@ -55,11 +55,9 @@ namespace techliyClient.Functions
             }
         }
 
-            public void getProcessorInfo()
+        public void getProcessorInfo()
         {
-            Console.WriteLine("\n\nDisplaying Processor Name....");
             RegistryKey processor_name = Registry.LocalMachine.OpenSubKey(@"Hardware\Description\System\CentralProcessor\0", RegistryKeyPermissionCheck.ReadSubTree);   //This registry entry contains entry for processor info.
-
             if (processor_name != null)
             {
                 if (processor_name.GetValue("ProcessorNameString") != null)

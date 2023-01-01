@@ -28,18 +28,23 @@ namespace techliyClient
             db = FirestoreDb.Create("techliy");
         }
 
-       public async void sendData(Dictionary<string, object> data , string Collection , string Document)
+       public async Task<bool> sendData(Dictionary<string, object> data , string Collection , string Document )
         {
            DocumentReference docRef = db.Collection(Collection).Document(Document);
             try
             {
                 await docRef.UpdateAsync(data);
+                return false;
             }
             catch (Exception)
             {
                 Console.WriteLine("Document does not exsist, creating new one..");
                 await docRef.SetAsync(data);
+                return true;
+
             }
+
+
         }
 
 
