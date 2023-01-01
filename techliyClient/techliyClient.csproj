@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Clowd.Squirrel" Version="3.0.210-g5f9f594" />
     <PackageReference Include="Google.Cloud.Firestore" Version="3.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     <PackageReference Include="System.Management" Version="7.0.0" />
