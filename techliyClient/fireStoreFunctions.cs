@@ -28,25 +28,44 @@ namespace techliyClient
             db = FirestoreDb.Create("techliy");
         }
 
-       public async Task<bool> sendData(Dictionary<string, object> data , string Collection , string Document )
+       public async Task SendData(Dictionary<string, object> data , string Collection , string Document )
         {
            DocumentReference docRef = db.Collection(Collection).Document(Document);
             try
             {
                 await docRef.UpdateAsync(data);
-                return false;
             }
             catch (Exception)
             {
-                Console.WriteLine("Document does not exsist, creating new one..");
-                await docRef.SetAsync(data);
-                return true;
+                foreach (var item in data)
+                    Console.WriteLine($"Adding New Field '{item.Key}' with value '{item.Value}' ");
 
+                await docRef.SetAsync(data);
             }
 
 
         }
 
+
+        /// <summary>
+        /// Checks if any document inside of a collection has a Feild that equals the value
+        /// </summary>
+        /// <param name="Collection"> any collection Like 'Clients' </param>
+        /// <param name="Field"> Like 'MachineName'</param>
+        /// <param name="Value"> value of the Feild to be checked</param>
+        /// <returns></returns>
+        public async Task<bool> Exists(string Collection, string Field ,  string Value)
+        {
+            CollectionReference docRef = db.Collection(Collection);
+
+            Query query = docRef.WhereEqualTo(Field, Value);
+
+            QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+            
+            return querySnapshot.Any();
+
+        }
 
     }
 }

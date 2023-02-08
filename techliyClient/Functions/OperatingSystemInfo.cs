@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 
 namespace techliyClient.Functions
 {
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
 
+    /// <summary>
+    /// Get OS Information from Local Machine and DLL's
+    /// </summary>
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class OperatingSystemInfo
     {
         public string Caption { get; private set; }
@@ -30,6 +33,7 @@ namespace techliyClient.Functions
 
         public void getOperatingSystemInfo()
         {
+            
             Console.WriteLine("Retriving operating system info");
             //Create an object of ManagementObjectSearcher class and pass query as parameter.
             ManagementObjectSearcher mos = new ManagementObjectSearcher("select * from Win32_OperatingSystem");

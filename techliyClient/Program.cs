@@ -8,63 +8,38 @@ using techliyClient;
 using System.Diagnostics;
 using techliyClient.Functions;
 using System.Drawing;
+using TechliyApp.MVVM.Model;
+using System.CodeDom;
+using System.Reflection;
+using Google.Protobuf.Collections;
 
 
 //https://github.com/clowd/Clowd.Squirrel
 
 public class Program
 {
+    
+   private static fireStoreFunctions cloud = new fireStoreFunctions();
+
+
     private static async Task Main(string[] args)
     {
-        Console.WriteLine("Techliy Client Started");
+        var OS = new OperatingSystemInfo();
 
-        fireStoreFunctions cloud = new fireStoreFunctions();
+        Console.WriteLine("Techliy Client Started...\n");
 
-        InitializePC();
-
-        async void InitializePC()
-        {
-            var os = new OperatingSystemInfo();
-
-            var info = new Dictionary<string, object>() {
-    {nameof(os.Caption), os.Caption },
-    {nameof(os.ProcessorName), os.ProcessorName },
-    {nameof(os.OperatingSystemArchitecture) , os.OperatingSystemArchitecture }
-    };
-
-            var exists = await cloud.sendData(info, "Clients", Environment.MachineName);
-
-            if (exists) Console.WriteLine(Environment.MachineName + " was found in the Database");
-            else Console.WriteLine(Environment.MachineName + " was NOT found in the Database");
-
-
-        }
+        InitializePC(OS);
 
         Console.WriteLine();
 
-        #region Background tasks
-        async Task RunInBackground(TimeSpan timeSpan, Action action)
-        {
-            var periodicTimer = new PeriodicTimer(timeSpan);
-            while (await periodicTimer.WaitForNextTickAsync())
-            {
-                action();
-            }
-        }
-        #endregion
 
-
-        Console.WriteLine();
-
-        await RunInBackground(TimeSpan.FromSeconds(2),
-            action:
-            () => cloud.sendData(new Dictionary<string, object>
-            {
-         {"RamUsage", ClientFunctions.getRam().ToString() }
+        await RunInBackground(TimeSpan.FromSeconds(2), () => cloud.SendData(
+            new Dictionary<string, object> { {"RamInUse", ClientFunctions.getRam().ToString("##.##") + "%" },  
+                { "UpTime", ClientFunctions.UpTime.ToString() },
+                {"DateUpdated" , DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc) }
             },
             "Clients",
-            Environment.MachineName)
-            );
+            Environment.MachineName));
 
         Console.Read();
 
@@ -80,6 +55,64 @@ public class Program
 
 
         Console.ReadLine();
+
+        #region Background tasks
+        async Task RunInBackground(TimeSpan timeSpan, Action action)
+        {
+            var periodicTimer = new PeriodicTimer(timeSpan);
+            while (await periodicTimer.WaitForNextTickAsync())
+            {
+                action();
+            }
+        }
+        #endregion
+    }
+
+    public static async void InitializePC(OperatingSystemInfo os)
+    {
+        Console.WriteLine("Initializing PC");
+
+        //check if PC exists, If so we do NOT need to InitializePC
+        if (await cloud.Exists("Clients", "MachineName", Environment.MachineName))
+        {
+           Console.WriteLine(Environment.MachineName + " was found in the Database");
+           return;
+        }
+
+        Console.WriteLine("Creating New Client '" + Environment.MachineName + "' and adding to the Database");
+
+        var NewPC = new ClientPC()
+        {
+            Activated = true,
+            DateCreated = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+            DateUpdated = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+            MachineName = Environment.MachineName,
+            ProcessorType = os.ProcessorName,
+            OperatingSystem = os.Caption,
+            OperatingSystemArchitecture = os.OperatingSystemArchitecture
+         
+        };
+
+
+
+        /*            var info = new Dictionary<string, object>() {
+            {nameof(NewPC.MachineName), NewPC.MachineName },
+            {nameof(NewPC.Description) , NewPC.Description },
+            {nameof(NewPC.OperatingSystem), NewPC.OperatingSystem },
+            {nameof(NewPC.ProcessorType), NewPC.ProcessorType },
+            {nameof(NewPC.OperatingSystemArchitecture) , NewPC.OperatingSystemArchitecture },
+            {nameof(NewPC.DateCreated) , NewPC.DateCreated },
+            {nameof(NewPC.DateUpdated) , NewPC.DateUpdated },
+            {nameof(NewPC.RamUsage) , "0.0" },
+         };*/
+
+        Dictionary<string, object> dictionary = NewPC.GetType().GetProperties()
+        .ToDictionary(x => x.Name, x => x.GetValue(NewPC) ?? new object());
+
+
+        await cloud.SendData(dictionary, "Clients", Environment.MachineName);
+
+        
     }
 }
 
