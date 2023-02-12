@@ -18,28 +18,43 @@ using Google.Protobuf.Collections;
 
 public class Program
 {
-    
-   private static fireStoreFunctions cloud = new fireStoreFunctions();
+
+        private static fireStoreFunctions cloud = new fireStoreFunctions();
+
+    public static int NumberOfReads { get; set; }
+    public static int NumberOfWrites { get; set; }
+
 
 
     private static async Task Main(string[] args)
     {
+        Console.WriteLine("Techliy Client Started...\n");
+
         var OS = new OperatingSystemInfo();
 
-        Console.WriteLine("Techliy Client Started...\n");
+        
 
         InitializePC(OS);
 
         Console.WriteLine();
 
 
-        await RunInBackground(TimeSpan.FromSeconds(2), () => cloud.SendData(
-            new Dictionary<string, object> { {"RamInUse", ClientFunctions.getRam().ToString("##.##") + "%" },  
-                { "UpTime", ClientFunctions.UpTime.ToString() },
-                {"DateUpdated" , DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc) }
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+         RunInBackground(TimeSpan.FromSeconds(1), () => cloud.SendData(
+            new Dictionary<string, object> {
+                {"RamInUse", ClientFunctions.getRam().ToString("##.##") + "%" },  
+                {"UpTime", ClientFunctions.UpTime.ToString() },
+                {"DateUpdated" , DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)}
+
             },
             "Clients",
             Environment.MachineName));
+
+        var c = Environment.ProcessorCount;
+        Console.WriteLine(Environment.UserName);
+
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
         Console.Read();
 
@@ -62,6 +77,8 @@ public class Program
             var periodicTimer = new PeriodicTimer(timeSpan);
             while (await periodicTimer.WaitForNextTickAsync())
             {
+            
+                Console.WriteLine(NumberOfWrites + " and " + NumberOfReads);
                 action();
             }
         }

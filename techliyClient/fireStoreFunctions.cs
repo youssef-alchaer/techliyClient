@@ -30,7 +30,9 @@ namespace techliyClient
 
        public async Task SendData(Dictionary<string, object> data , string Collection , string Document )
         {
-           DocumentReference docRef = db.Collection(Collection).Document(Document);
+            Program.NumberOfWrites++;
+
+            DocumentReference docRef = db.Collection(Collection).Document(Document);
             try
             {
                 await docRef.UpdateAsync(data);
@@ -56,6 +58,8 @@ namespace techliyClient
         /// <returns></returns>
         public async Task<bool> Exists(string Collection, string Field ,  string Value)
         {
+            Program.NumberOfReads++;
+
             CollectionReference docRef = db.Collection(Collection);
 
             Query query = docRef.WhereEqualTo(Field, Value);
