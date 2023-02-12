@@ -12,6 +12,8 @@ using TechliyApp.MVVM.Model;
 using System.CodeDom;
 using System.Reflection;
 using Google.Protobuf.Collections;
+using Squirrel;
+using Squirrel.Sources;
 
 
 //https://github.com/clowd/Clowd.Squirrel
@@ -28,7 +30,17 @@ public class Program
 
     private static async Task Main(string[] args)
     {
+        SquirrelAwareApp.HandleEvents();
+
+      
+        FileVersionInfo versioninfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+
+        Console.WriteLine("Techliy V" + versioninfo);
+
+
         Console.WriteLine("Techliy Client Started...\n");
+
+       await CheckForUpdates();
 
         var OS = new OperatingSystemInfo();
 
@@ -130,6 +142,28 @@ public class Program
         await cloud.SendData(dictionary, "Clients", Environment.MachineName);
 
         
+    }
+
+
+    private static async Task CheckForUpdates()
+    {
+
+        using (var mgqr = UpdateManager.GitHubUpdateManager("https://github.com/myuser/myapp"))
+        {
+            await mgqr.Result.UpdateApp();
+        }
+
+        using var mgr = new UpdateManager("https://github.com/youssef-alchaer/techliyClient/releases");
+
+        
+        if (!mgr.IsInstalledApp)
+            return;
+
+        var newVersion = await mgr.UpdateApp();
+
+        // You must restart to complete the update. 
+        // This can be done later / at any time.
+        if (newVersion != null) UpdateManager.RestartApp();
     }
 }
 
