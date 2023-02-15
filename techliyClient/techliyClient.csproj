@@ -5,8 +5,9 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-  </PropertyGroup>
+    <AssemblyVersion>1.0.5</AssemblyVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+      </PropertyGroup>
 
   <ItemGroup>
     <None Remove="techliy-firebase-adminsdk-f61b6-6d09b4d37e.json" />

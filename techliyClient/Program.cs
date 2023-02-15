@@ -13,7 +13,7 @@ using System.CodeDom;
 using System.Reflection;
 using Google.Protobuf.Collections;
 using Squirrel;
-using Squirrel.Sources;
+using Squirrel.SimpleSplat;
 
 
 //https://github.com/clowd/Clowd.Squirrel
@@ -30,17 +30,27 @@ public class Program
 
     private static async Task Main(string[] args)
     {
-        SquirrelAwareApp.HandleEvents();
+        SquirrelAwareApp.HandleEvents(
+      onInitialInstall: OnAppInstall,
+      onAppUninstall: OnAppUninstall,
+      onEveryRun: OnAppRun);
 
-      
-        FileVersionInfo versioninfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
+    
+
+
+    FileVersionInfo versioninfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
 
         Console.WriteLine("Techliy V" + versioninfo);
 
+        Console.WriteLine("YAAAAA welcome to da new version\n");
+
+        await UpdateMyApp();
+
 
         Console.WriteLine("Techliy Client Started...\n");
+       Console.WriteLine("YAAAAA...\n");
 
-       await CheckForUpdates();
+        //  await CheckForUpdates();
 
         var OS = new OperatingSystemInfo();
 
@@ -97,6 +107,26 @@ public class Program
         #endregion
     }
 
+    private static async Task UpdateMyApp()
+    {
+        using var mgr = new GithubUpdateManager(@"https://github.com/youssef-alchaer/techliyClient");
+
+       /* mgr.CheckForUpdate();
+        Console.WriteLine(mgr.CheckForUpdate); */ 
+
+        if (!mgr.IsInstalledApp)
+        {
+            return;
+        }
+        var newVersion = await mgr.UpdateApp();
+
+        // optionally restart the app automatically, or ask the user if/when they want to restart
+        if (newVersion != null)
+        {
+            UpdateManager.RestartApp();
+        }
+    }
+
     public static async void InitializePC(OperatingSystemInfo os)
     {
         Console.WriteLine("Initializing PC");
@@ -148,22 +178,28 @@ public class Program
     private static async Task CheckForUpdates()
     {
 
-        using (var mgqr = UpdateManager.GitHubUpdateManager("https://github.com/myuser/myapp"))
-        {
-            await mgqr.Result.UpdateApp();
-        }
+        var manager = await UpdateManager.GitHubUpdateManager(@"https://github.com/youssef-alchaer/techliyClient/releases/");
 
-        using var mgr = new UpdateManager("https://github.com/youssef-alchaer/techliyClient/releases");
 
-        
-        if (!mgr.IsInstalledApp)
-            return;
+    }
 
-        var newVersion = await mgr.UpdateApp();
 
-        // You must restart to complete the update. 
-        // This can be done later / at any time.
-        if (newVersion != null) UpdateManager.RestartApp();
+
+    private static void OnAppInstall(SemanticVersion version, IAppTools tools)
+    {
+        tools.CreateShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
+    }
+
+    private static void OnAppUninstall(SemanticVersion version, IAppTools tools)
+    {
+        tools.RemoveShortcutForThisExe(ShortcutLocation.StartMenu | ShortcutLocation.Desktop);
+    }
+
+    private static void OnAppRun(SemanticVersion version, IAppTools tools, bool firstRun)
+    {
+        tools.SetProcessAppUserModelId();
+        // show a welcome message when the app is first installed
+        if (firstRun) Console.WriteLine("Thanks for installing my application!");
     }
 }
 
