@@ -14,6 +14,8 @@ using System.Reflection;
 using Google.Protobuf.Collections;
 using Squirrel;
 using Squirrel.SimpleSplat;
+using System;
+using System.Net.NetworkInformation;
 
 
 //https://github.com/clowd/Clowd.Squirrel
@@ -21,74 +23,51 @@ using Squirrel.SimpleSplat;
 public class Program
 {
 
-        private static fireStoreFunctions cloud = new fireStoreFunctions();
+    private static FireStoreFunctions cloud = new FireStoreFunctions();
 
     public static int NumberOfReads { get; set; }
     public static int NumberOfWrites { get; set; }
 
-
-
     private static async Task Main(string[] args)
     {
-        SquirrelAwareApp.HandleEvents(
-      onInitialInstall: OnAppInstall,
-      onAppUninstall: OnAppUninstall,
-      onEveryRun: OnAppRun);
+        SquirrelAwareApp.HandleEvents(onInitialInstall: OnAppInstall, onAppUninstall: OnAppUninstall, onEveryRun: OnAppRun);
 
-    
+        Console.WriteLine($"Techliy Client V{FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion.ToString()} Started...\n");
 
+        Console.WriteLine("Checking internet Connection...");
 
-    FileVersionInfo versioninfo = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-
-        Console.WriteLine("Techliy V" + versioninfo);
-
-        Console.WriteLine("YAAAAA welcome to da new version\n");
-
-        await UpdateMyApp();
-
-
-        Console.WriteLine("Techliy Client Started...\n");
-       Console.WriteLine("YAAAAA...\n");
-
-        //  await CheckForUpdates();
+        if (new Ping().Send("www.google.com").Status != IPStatus.Success)
+            throw new Exception("You must be connected to the internet to used this app.");
 
         var OS = new OperatingSystemInfo();
 
-        
-
         InitializePC(OS);
 
-        Console.WriteLine();
+        if (!await cloud.Exists("Clients", Environment.MachineName,  nameof(ClientPC.Activated) , true))
+            throw new Exception("This App is not Activated.");
+
+      
+
+        await UpdateMyApp();
+
+      
+
+        
+
+     
 
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+       
 
-         RunInBackground(TimeSpan.FromSeconds(1), () => cloud.SendData(
+
+        RunInBackground(TimeSpan.FromSeconds(3), () => cloud.SendData(
             new Dictionary<string, object> {
                 {"RamInUse", ClientFunctions.getRam().ToString("##.##") + "%" },  
                 {"UpTime", ClientFunctions.UpTime.ToString() },
                 {"DateUpdated" , DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)}
-
             },
             "Clients",
             Environment.MachineName));
-
-        var c = Environment.ProcessorCount;
-        Console.WriteLine(Environment.UserName);
-
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-        Console.Read();
-
-
-
-
-        //cloud.sendData(new Dictionary<string, object> { { "Ram Useage", percent.ToString() } }, "Clients", "AMD Desktop");
-
-
-
-
-
 
 
         Console.ReadLine();
@@ -99,20 +78,25 @@ public class Program
             var periodicTimer = new PeriodicTimer(timeSpan);
             while (await periodicTimer.WaitForNextTickAsync())
             {
-            
-                Console.WriteLine(NumberOfWrites + " and " + NumberOfReads);
+                
+                Console.SetCursorPosition(0, Console.CursorTop - 1);
+                
+                Console.WriteLine("Writes: " + NumberOfWrites + " and " + "Reads: " +  NumberOfReads);
                 action();
             }
         }
         #endregion
     }
 
+
     private static async Task UpdateMyApp()
     {
         using var mgr = new GithubUpdateManager(@"https://github.com/youssef-alchaer/techliyClient");
 
-       /* mgr.CheckForUpdate();
-        Console.WriteLine(mgr.CheckForUpdate); */ 
+        /* mgr.CheckForUpdate();
+         Console.WriteLine(mgr.CheckForUpdate); */
+
+      
 
         if (!mgr.IsInstalledApp)
         {
@@ -124,18 +108,23 @@ public class Program
         if (newVersion != null)
         {
             UpdateManager.RestartApp();
+          
         }
     }
 
     public static async void InitializePC(OperatingSystemInfo os)
     {
-        Console.WriteLine("Initializing PC");
+        Console.WriteLine("Initializing PC...");
 
         //check if PC exists, If so we do NOT need to InitializePC
-        if (await cloud.Exists("Clients", "MachineName", Environment.MachineName))
+        if (await cloud.Exists("Clients", Environment.MachineName , nameof(ClientPC.MachineName), Environment.MachineName))
         {
            Console.WriteLine(Environment.MachineName + " was found in the Database");
-           return;
+           Console.WriteLine();
+           Console.WriteLine();
+
+
+            return;
         }
 
         Console.WriteLine("Creating New Client '" + Environment.MachineName + "' and adding to the Database");
@@ -174,14 +163,6 @@ public class Program
         
     }
 
-
-    private static async Task CheckForUpdates()
-    {
-
-        var manager = await UpdateManager.GitHubUpdateManager(@"https://github.com/youssef-alchaer/techliyClient/releases/");
-
-
-    }
 
 
 

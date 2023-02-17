@@ -9,10 +9,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using TechliyApp.MVVM.Model;
 
 namespace techliyClient
 {
-    public class fireStoreFunctions
+    public class FireStoreFunctions
     {
         
 
@@ -22,7 +23,7 @@ namespace techliyClient
 
         private FirestoreDb db;
 
-        public fireStoreFunctions()
+        public FireStoreFunctions()
         {
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             db = FirestoreDb.Create("techliy");
@@ -56,13 +57,13 @@ namespace techliyClient
         /// <param name="Field"> Like 'MachineName'</param>
         /// <param name="Value"> value of the Feild to be checked</param>
         /// <returns></returns>
-        public async Task<bool> Exists(string Collection, string Field ,  string Value)
+        public async Task<bool> Exists(string Collection, string Document ,  string Field ,  object Value)
         {
             Program.NumberOfReads++;
 
             CollectionReference docRef = db.Collection(Collection);
 
-            Query query = docRef.WhereEqualTo(Field, Value);
+            Query query = docRef.WhereEqualTo(Field, Value).WhereEqualTo(nameof(ClientPC.MachineName) , Document);
 
             QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
 
